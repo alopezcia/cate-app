@@ -1,11 +1,619 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CateApp</title>
-</head>
-<body>
-    <h1>Registro de solicitudes catequesis</h1>
-</body>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Registro Catequesis App</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="./style.css" rel="stylesheet"/>
+
+  </head>
+
+  <body>
+
+   <div class="container">
+    <form class="needs-validation" novalidate id="main-form">
+
+    <!-- Anagramas -->
+      <div class="row g-3">
+        <div class="col-lg-1">
+            <img src="./iglesia_parroquial_sant_vicent_ferrer.png" width="100px">
+        </div>
+  
+        <div class="col-10 text-center">
+            <div class="row" >
+              <h3>FICHA DE INSCRIPCIÓN CATEQUESIS DE LA COMUNIDAD 2022/23</h3>
+            </div>
+  
+            <div class="row py-1" >
+              <div class="col-2"><h5>Parroquia</h5></div>
+              <div class="col-8">
+                <!-- <input class="col-12" type="text" width="100%"> -->
+                <select class="selectpicker col-12" name="parroquia">
+                  <option>San Vicente Ferrer</option>
+                  <option>La Inmaculada</option>
+                </select>
+              </div> 
+            </div>
+
+            <div class="row p-1">
+              <div class="col-2"><h5>Nivel</h5></div>
+              <div class="col-8">
+                <!-- <input class="col-12" type="text" width="100%"> -->
+                <select class="selectpicker col-12" name="nivel">
+                  <option>Despertar Religioso: 2º PRIMARIA</option>
+                  <option>Pre-Comunión:        3º PRIMARIA</option>
+                  <option>1a COMUNIÓN:         4º PRIMARIA</option>
+                  <option>Grupos ITIO: 5º y 6º PRIMARIA, 1º y 2º ESO</option>
+                  <option>Confirmación: 2º ESO, 1º BACH.</option>
+                </select>
+              </div> 
+              <div class="col-2"><small>(Seleccionar)</small></div> 
+            </div>
+        </div>
+  
+        <div class="col-lg-1">
+            <img src="./parroquia_inmaculada_concepcion.png" width="100px">
+        </div>
+      </div>
+
+      <!-- Formulario -->
+      <div>
+        <div aria-labelledby="exampleModalLongTitle" class="modal fade" id="bookingmodal" role="dialog" tabindex="-1" style="display: none;" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <form>
+                  <input type="button" id="reset" value="Borrar" class="btn btn-danger">
+                </form>
+                <span id="coords"><small>xxx yyy</small></span>
+                <button aria-label="Close" class="close" data-dismiss="modal" type="button">
+                  <span aria-hidden="true">×</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <div class="guide">
+                  <div class="row item">
+                    <div class="col-md-12 order-md-2">
+                      <h2 class="item-heading"><span class="text-muted">Firma del progenitor/a</span></h2>
+                      <canvas id="canvas"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <span id="coords-calc"><small>xxx yyy</small></span>
+                <button class="btn btn-secondary" data-dismiss="modal" type="button">Firmar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- <form class="needs-validation" novalidate id="main-form"> -->
+          <!-- Nombre y apellidos del niño -->
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">Del niño/a apellidos</label>
+              <input type="text" class="form-control" id="apellidos" name="apellidos" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor para los apellidos es obligatorio
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">y nombre</label>
+              <input type="text" class="form-control" id="nombre" name="nombre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor para el nombre es obligatorio
+              </div>
+            </div>
+          </div>
+
+          <!-- Parroquia y fecha nacimiento -->
+          <div class="row g-3">
+            <div class="col-sm-8">
+              <label for="firstName" class="form-label">Parroquia donde se bautizó</label>
+              <select class="selectpicker col-12" name="bautizo">
+                <option>San Vicente Ferrer</option>
+                <option>Inmaculada Concepción</option>
+                <option>Santa Isabel de Hungría</option>
+                <option>Otra</option>
+                <option>No está bautizado</option>
+              </select>
+              <!-- <input type="text" class="form-control" id="parroquia-bautizo" name="parroquia-bautizo" placeholder="" value="" required> -->
+              <!-- <div class="invalid-feedback">
+              El valor para la parroquia donde se bautizo es obligatorio
+              </div> -->
+            </div>
+            <div class="col-sm-4">
+              <label for="lastName" class="form-label">Fecha de nacimiento (dd/mm/aaaa)</label>
+              <input type="text" class="form-control" id="nacimiento" name="fecha-nacimiento" placeholder="" value="" required>
+              <div class="invalid-feedback">
+              La fecha de nacimiento es obligatoria
+              </div>
+            </div>
+          </div>
+
+          <!-- Colegio - Curso -->
+          <div class="row g-3">
+            <div class="col-sm-8">
+              <label for="firstName" class="form-label">Colegio actual</label>
+              <input type="text" class="form-control" id="colegio" name="colegio" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor para el colegio actual es obligatorio
+              </div>
+            </div>
+            <div class="col-sm-4">
+              <label for="lastName" class="form-label">Curso escolar</label>
+              <select class="selectpicker col-12" name="curso">
+                <option>4º PRIMARIA</option>
+                <option>6º PRIMARIA</option>
+                <option>1º ESO</option>
+                <option>2º ESO</option>
+                <option>3º ESO</option>
+                <option>4º ESO</option>
+                <option>1º BACH.</option>
+                <option>2º BACH.</option>
+              </select>
+
+              <!-- <input type="text" class="form-control" id="curso-escolar" name="curso-escolar" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor para el curso escolar es obligatorio
+              </div> -->
+            </div>
+          </div>
+
+          <hr>
+          <!-- Nombre y apellidos del padre -->
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">Del padre apellidos</label>
+              <input type="text" class="form-control" id="apellidos-padre" id="apellidos-padre" name="apellidos-padre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                    El valor para los apellidos del padre son obligatorios
+              </div>
+            </div>
+
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">y nombre</label>
+              <input type="text" class="form-control" id="nombre-padre" name="nombre-padre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor del nombre del padre es obligatorio
+              </div>
+            </div>
+          </div>
+
+          <!-- Dni y tlfno del padre -->
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">DNI del padre</label>
+              <input type="text" class="form-control" id="dni-padre" name="dni-padre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El dni del padre es obligatorio
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">Teléfono del padre</label>
+              <input type="text" class="form-control" id="telefono-padre" name="telefono-padre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor del teléfono del padre es obligatorio
+              </div>
+            </div>
+          </div>
+
+          <!-- Firma Padre -->
+          <div class="row p-2">
+            <!-- Firma Padre -->
+            <div class="col-sm-12">
+              <div class="col-12 text-center">
+                <img id="firmadoPadre" width="200" height="100"/>
+                <button type="button" class="btn btn-success" 
+                      data-target="#bookingmodal" 
+                      data-toggle="modal" data-bs-p="Padre">Firmar</button>
+              </div>
+            </div>
+          </div>
+          <hr class="my-4">
+
+          <!-- Nombre y apellidos de la madre -->
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">De la madre apellidos</label>
+              <input type="text" class="form-control" id="apellidos-madre" name="apellidos-madre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+              El valor para los apellidos de la madre son obligatorios
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">y nombre</label>
+              <input type="text" class="form-control" id="nombre-madre" name="nombre-madre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor del nombre de la madre es obligatorio
+              </div>
+            </div>
+          </div>
+
+          <!-- Dni y tlfn de la madre -->
+          <div class="row g-3">
+            <div class="col-sm-6">
+              <label for="lastName" class="form-label">DNI de la madre</label>
+              <input type="text" class="form-control" id="dni-madre" name="dni-madre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor del dni de la madre es obligatorio
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="firstName" class="form-label">Teléfono de la madre</label>
+              <input type="text" class="form-control" id="telefono-madre" name="telefono-madre" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor del teléfono de la madre es obligatorio
+              </div>
+            </div>
+          </div>
+
+          <!-- Firma Madre-->
+          <div class="row p-2">
+            <div class="col-sm-12">
+              <div class="col-12 text-center">
+                <img id="firmadoMadre" width="200" height="100"/>
+                <button type="button" class="btn btn-success" 
+                      data-target="#bookingmodal" 
+                      data-toggle="modal" data-bs-p="Madre">Firmar</button>
+              </div>
+            </div>
+          </div>
+          <hr class="my-4">
+
+          <!-- Dirección y codpostal -->
+          <div class="row g-3">
+            <div class="col-sm-9">
+              <label for="firstName" class="form-label">Dirección</label>
+              <input type="text" class="form-control" id="direccion" name="direccion" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor para la dirección de la  madre es obligatorio
+              </div>
+            </div>
+  
+            <div class="col-sm-3">
+              <label for="lastName" class="form-label">C.P.</label>
+              <input type="text" class="form-control" id="codpost" name="codpost" placeholder="" value="" required>
+              <div class="invalid-feedback">
+                El valor del código postal es obligatorio
+              </div>
+            </div>
+          </div>
+  
+          <!-- e-mail -->
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="email" class="form-label">Email <span class="text-muted">(Optional)</span></label>
+              <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com">
+              <div class="invalid-feedback">
+                El valor del email de contacto es obligatorio
+              </div>
+            </div>
+          </div>
+
+          <!-- Alergias -->
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="texto" class="form-label">Alergias, circunstancias epeciales en la familia, dificultades de aprendizaje, etc. <span class="text-muted">(Optional)</span></label>
+              <textarea class="form-control" id="texto" name="alergias" rows="3"></textarea>
+            </div>
+          </div>
+
+          <!-- Comentarios -->
+          <div class="row g-3">
+            <div class="col-12">
+              <label for="comentarios" class="form-label">Comentarios <span class="text-muted">(Optional)</span></label>
+              <textarea class="form-control" id="comentarios" name="comentarios" rows="3"></textarea>
+            </div>
+          </div>
+
+          <h5>PROTECCIÓN DE DATOS I:</h5>
+          <div class="col-12">
+            <div class="row">
+              <div class="col-10">
+                <p>IMAGEN DIGITAL: Consiento la publicación de la imagen en las Redes Sociales y WEB de las Parroquias como del Obispado de Orihuela-Alicante.</p>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input id="imagen-digital-si" name="imagen-digital" type="radio" class="form-check-input" checked required>
+                  <label class="form-check-label" for="imagen-digital-si">SI</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input id="imagen-digital-no" name="imagen-digital" type="radio" class="form-check-input" required>
+                  <label class="form-check-label" for="imagen-digital-no">NO</label>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-10">
+                <p>IMAGEN IMPRESA: Consiento la publicación de imágenes en el Tablón de anuncios, revistas, orlas, anuario de la Parroquia o del Obispado de Orihuela-Alicante. Como en medios de comunicación externos.</p>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input id="imagen-impresa-si" name="imagen-impresa" type="radio" class="form-check-input" checked required>
+                  <label class="form-check-label" for="imagen-impresa-si">SI</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input id="imagen-impresa-no" name="imagen-impresa" type="radio" class="form-check-input" required>
+                  <label class="form-check-label" for="imagen-impresa-no">NO</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-10">
+                <p>COMUNICACIONES: Consiento recibir por cualquier medio, incluidos los medios electrónicos, información de la Parroquia como del Obispado de Orihuela-Alicante de actividades, coordinación de grupos de pastoral o eventos religiosos.</p>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input id="comunicaciones-si" name="comunicaciones" type="radio" class="form-check-input" checked required>
+                  <label class="form-check-label" for="comunicaciones-si">SI</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input id="comunicaciones-no" name="comunicaciones" type="radio" class="form-check-input" required>
+                  <label class="form-check-label" for="comunicaciones-no">NO</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row">
+              <div class="col-10">
+                <p>DATOS DE SALUD: Consiento el tratamiento de los datos de salud que serán tratados con la máxima confidencialidad para una correcta coordinación de las actividades, como en comidas o meriendas. En beneficio de los participantes.</p>
+              </div>
+              <div class="col-2">
+                <div class="form-check form-check-inline">
+                  <input id="datos-salud-si" name="datos-salud" type="radio" class="form-check-input" checked required>
+                  <label class="form-check-label" for="datos-salud-si">SI</label>
+                </div>
+                <div class="form-check form-check-inline">
+                  <input id="datos-salud-no" name="datos-salud" type="radio" class="form-check-input" required>
+                  <label class="form-check-label" for="datos-salud-no">NO</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <h5>PROTECCIÓN DE DATOS II:</h5>
+          <div class="form-check form-check-inline">
+            <input type="checkbox" class="form-check-input" id="acepta-trat" name="acepta-trat" required>
+            <label class="form-check-label" for="acepta-trat">Acepto el tratamiento de los datos Política de privacidad. Si se produce alguna modificación de sus datos, comuníquenoslo, para mantener sus datos actualizados. El abajo firmante, declara que los datos de contacto son ciertos y que se ha informado y obtenido el consentimiento para el tratamiento de datos por parte de las Parroquias. Para más información sobre tratamiento de los datos lo pueden solicitar a <a href="mailto:inscripcionsanvicenteferrer@gmail.com">inscripcionsanvicenteferrer@gmail.com</a></label>
+          </div>
+
+          <hr class="my-4">
+          <h5 class="text-center">INFORMACIÓN BÁSICA SOBRE PROTECCIÓN DE DATOS</h5>
+          <label><strong>Responsable</strong> PARROQUIA SAN VICENTE FERRER y PARROQUIA INMACULADA CONCEPCIÓN</label>
+          <label><strong>DPO</strong> <a href="protecciondedatos@diocesisa.org">protecciondedatos@diocesisa.org</a></label>
+          <label><strong>Finalidades</strong> Gestión  y  organización  de  los  grupos  de  pastoral  de  catequesis  de  iniciación  sacramental.  Uso  de  datos  de  salud  para  una  correctacoordinación en las actividades y para gestionar meriendas o comidas. Uso de la imagen. Realización de comunicados para coordinar las actividades a través de cualquier medio, incluido los electrónicos. Envíos informativos de la Parroquia o del Obispado de Orihuela-Alicante para informar de eventos.</label>
+          <label><strong>Legitimación</strong> Consentimiento del interesado Padres/Madres o Tutores legales.</label>
+          <label><strong>Destinatarios</strong> No se cederán datos a terceros, salvo olbigación legal o dando su consentimiento.</label>
+          <label><strong>Derechos</strong> Acceso, rectificación, supresión, oposición y otros desarrollados en información adicional.</label>
+          <label><strong>Información adicional</strong> <a href="mailto:inscripcioninmaculada@gmail.com">inscripcioninmaculada@gmail.com</a>  y <a href="inscripcionsanvicenteferrer@gmail.com">inscripcionsanvicenteferrer@gmail.com</a></label>
+
+          <hr class="my-4">
+          <button class="w-100 btn btn-primary btn-lg" type="submit" >Enviar la inscripción</button>
+        </form>
+        </div>
+   </div>
+  
+	 <script>
+			const span = document.getElementById('coords');
+			const spanC = document.getElementById('coords-calc');
+
+			const serializeForm = ( form ) => {
+  			let obj = {}
+  			const formData = new FormData( form );
+  			for( let key of formData.keys() ) {
+	        obj[key]=formData.get(key);
+			  }
+  			return obj;
+			};
+
+			const mainFormSubmitted =  (event) => {
+        event.preventDefault();
+   			event.stopPropagation();
+  			// console.log( event  );
+  			const form = event.target;
+  			const serialized = serializeForm(event.target);
+
+			  // Validaciones del formulario 
+  			// 1º Aceptar protección de datos
+  			if( !serialized['acepta-trat'] ){
+    			Swal.fire({icon: 'error',title: 'Debe aceptar la protección de datos'});
+    			return;
+  			}
+
+  			// 2º Chequear datos requeridos
+  			if (!form.checkValidity()) {
+    			// event.preventDefault();
+    			// event.stopPropagation();
+    			let campoErroneo = '';
+    			const campos=[ 
+    				'apellidos',
+    				'apellidos-madre',
+    				'apellidos-padre',
+    				'codpost',
+    				'colegio',
+    				'direccion',
+    				'dni-madre',
+    				'dni-padre',
+    				'email',
+    				'fecha-nacimiento',
+    				'nombre',
+    				'nombre-madre',
+    				'nombre-padre',
+    				'telefono-madre',
+    				'telefono-padre',
+    			];
+          let erroneos = 0;
+    			campos.forEach(element => {
+      			if( !serialized[element] ){
+        		  Swal.fire({icon: 'error', title: 'Oops...', text: `El campo ${element} es obligatrio`, footer: 'Cumplimentar'});
+              erroneos++;
+      			}
+    			});
+          form.classList.add('was-validated');
+          if( erroneos >  0 )
+            return;
+  			}
+  			
+  			const json = JSON.stringify( serialized );
+				window.location.href = "upload_form.php?solicitud=" + btoa(json); 
+			};
+
+			const logSubmit = (event) => {
+  			console.log( `Form Submitted! Timestamp: ${event.timeStamp}` );
+  			event.preventDefault();
+			};
+
+			const form = document.getElementById("main-form");
+			form.addEventListener("submit", mainFormSubmitted);
+
+			const resetCanvas = () => {
+  			const canvas = document.getElementById('canvas');
+  			canvas.width_line = 1;
+  			canvas.color = "#000000";
+				canvas.sign = false;
+  			canvas.begin_sign = false;
+  			canvas.cursorX = 0;
+  			canvas.cursorY = 0;
+  			const context = canvas.getContext('2d');
+  			context.clearRect(0, 0, canvas.width, canvas.height);
+			};
+
+			document.getElementById("reset").addEventListener("click", () => {
+  			resetCanvas();
+			});
+
+			// Target => canvas
+			const updateMousePosition = (target, mX, mY) => {
+     		const rect = target.getBoundingClientRect();
+    		const scaleX = target.width / rect.width;
+    		const scaleY = target.height / rect.height;
+    		target.cursorX = Math.floor( ((mX - rect.left)*scaleX)*100)/100;
+    		target.cursorY = Math.floor( ((mY - rect.top)*scaleY)*100)/100;
+  		}
+
+			// Target => canvas
+			const  createSignature = (target) => {
+    		if( target ){
+      		const context = target.getContext('2d');
+      		// console.log( 'context', context );
+      		if( context ){
+        		if (!target.begin_sign) {
+          		context.beginPath();
+          		context.moveTo(target.cursorX, target.cursorY);
+          		target.begin_sign = true;
+        		} else {
+          		context.lineTo(target.cursorX, target.cursorY);
+          		context.strokeStyle = target.color;
+          		context.lineWidth = target.width_line;
+          		context.stroke();
+        		}
+      		}
+    		}
+			};
+
+			const onMouseDown = ({ target, pageX, pageY, changedTouches }) => {
+  			target.sign = true;
+  			// span.innerText = `md   x: ${ target.cursorX} y; ${target.cursorY}`;
+        // console.log( 'changedTouches', changedTouches );
+        if( changedTouches && changedTouches[0]){
+          updateMousePosition(target, changedTouches[0].pageX, changedTouches[0].pageY);
+        } else {
+          updateMousePosition(target, pageX, pageY);
+        }
+			};
+
+			const onMouseUp = ({target}) => {
+  			target.sign = false;
+  			target.begin_sign = false;
+			};
+
+			const onMouseMove = ({ target, pageX, pageY, changedTouches }) => {
+        if( changedTouches && changedTouches[0]){
+    			// span.innerText = `mm   x: ${ changedTouches[0].pageX } y; ${ changedTouches[0].pageY }`;
+    			updateMousePosition(target, changedTouches[0].pageX, changedTouches[0].pageY);
+        } else {
+    			span.innerText = `mm   x: ${ pageX} y; ${pageY}`;
+    			updateMousePosition(target, pageX, pageY);
+          spanC.innerText = `sign: ${ target.sign } begin_sign: ${target.begin_sign}  x: ${ target.cursorX} y; ${target.cursorY}`;
+        }
+  			if (target.sign) {
+    			createSignature(target);
+  			}
+			};
+  
+			const  modalEvents = ()=> {
+    		$("#bookingmodal").on("hidden.bs.modal", function () {
+      	// Quitar eventos
+
+      	const canvas = document.getElementById('canvas');
+      	  canvas.removeEventListener("mousedown", onMouseDown, false );
+      	  canvas.removeEventListener("mouseup", onMouseUp, false );
+      	  canvas.removeEventListener('mousemove', onMouseMove, false );
+          canvas.addEventListener("touchstart", onMouseDown, false );
+          canvas.addEventListener("touchend", onMouseUp, false );
+          canvas.addEventListener('touchmove', onMouseMove, false );
+
+      	let i = document.getElementById('firmadoPadre');
+      	if(  this.progenitor === 'Madre'){
+        	i = document.getElementById('firmadoMadre');
+      	}
+      	const base64 = canvas.toDataURL();
+      	i.src = base64;
+      	resetCanvas();
+      	canvas.sign = false;
+      	canvas.begin_sign = false;
+      	canvas.cursorX = 0;
+      	canvas.cursorY = 0;
+    	});
+
+    $("#bookingmodal").on("show.bs.modal", function (event) {
+        // Esto es una "ñapa" para que funcione el firmado 
+        window.scroll(0,0);
+
+        const canvas = document.getElementById('canvas');
+        canvas.width_line = 1;
+        canvas.color = "#000000";
+        canvas.sign = false;
+        canvas.begin_sign = false;
+        canvas.cursorX = 0;
+        canvas.cursorY = 0;
+        const context = canvas.getContext('2d');
+      
+        const button = event.relatedTarget;
+        let i = document.getElementById('firmadoPadre');
+        // En el button hay que añadir un attr. data-bs-p con valor Padre o Madre
+        // Para saber que imagen hya que actualziar o de la que hay que dibujar en canvas 
+        this.progenitor = button.getAttribute('data-bs-p');
+        if(  this.progenitor === 'Madre'){
+          i = document.getElementById('firmadoMadre');
+        }
+        if( i.src ){
+          context.drawImage(i, 0, 0);
+        }
+        // Se establecen los eventos 
+          canvas.addEventListener("mousedown", onMouseDown, false );
+          canvas.addEventListener("mouseup", onMouseUp, false );
+          canvas.addEventListener('mousemove', onMouseMove, false );
+          canvas.addEventListener("touchstart", onMouseDown, false );
+          canvas.addEventListener("touchend", onMouseUp, false );
+          canvas.addEventListener('touchmove', onMouseMove, false );
+      });
+		}
+
+			// Lanza todos los event 
+		modalEvents();
+
+    document.getElementById('comentarios').innerText = navigator.platform;
+
+	 </script>	
+
+  </body>
 </html>
