@@ -2,20 +2,32 @@ const express = require('express');
 const cors = require('cors');
 const helmet  = require('helmet');
 const compression = require('compression');
+const http   = require('http');
+const https   = require('https');
+const fs = require('fs');
 
 // const fileUpload = require('express-fileupload');
 
 // const { dbConnection } = require('../database/config');
+const httpsServerOptions = {
+    key:  fs.readFileSync(process.env.KEY_PATH),
+    cert: fs.readFileSync(process.env.CERT_PATH)
+};
 
 class Server {
 
     constructor() {
         this.app  = express();
         this.port = process.env.HTTP_PORT;
+        this.httpsPort = process.env.HTTPS_PORT;
+        
+        this.serverHttp = http.createServer(this.app);
+        this.serverHttps = https.createServer(httpsServerOptions, this.app);
 
         this.paths = {
             cert:       '/api/get-cert',
             qr:         '/api/get-QRCert',
+            solicitud:  '/api/post-solicitud',
         }
 
 
@@ -44,6 +56,13 @@ class Server {
 
         // Lectura y parseo del body
         this.app.use( express.json() );
+        
+        this.app.use( (req, res, next ) => {
+            if( req.secure ) 
+                next();
+            else 
+                res.redirect(`https://${req.headers.host}${req.url}`);
+        });
 
         // Directorio Público
         this.app.use( express.static('public') );
@@ -60,40 +79,17 @@ class Server {
     
 
     routes() {
-        this.app.use( this.paths.cert, ( req, res = response ) =>{
-            const port = process.env.API_HTTPS_PORT;
-            const urlRedirect = `https://${req.headers.host}:${port}${req.url}`;
-            // console.log( urlRedirect )
-            res.redirect( urlRedirect );
-        });
-        
-        // this.app.use( this.paths.cert, require('../routes/redirecter'));
-        // this.app.use( this.paths.qr, require('../routes/redirecter'));
-
-        this.app.use( this.paths.qr, ( req, res = response ) =>{
-            const port = process.env.API_HTTPS_PORT;
-            const urlRedirect = `https://${req.headers.host}:${port}${req.url}`;
-            // console.log( urlRedirect )
-            res.redirect( urlRedirect );
-        });
-
-
-        // this.app.use( this.paths.categorias, require('../routes/categorias'));
-        // this.app.use( this.paths.productos, require('../routes/productos'));
-        // this.app.use( this.paths.usuarios, require('../routes/usuarios'));
-        // this.app.use( this.paths.uploads, require('../routes/uploads'));
-        
+        this.app.use( this.paths.cert, require('../routes/redirecter'));
+        this.app.use( this.paths.qr, require('../routes/redirecter'))
+        this.app.use( this.paths.solicitud, require('../routes/solicitudes') );        
     }
 
     listen() {
-        this.app.listen( this.port, () => {
-            console.log('Servidor corriendo en puerto', this.port );
-        });
+        this.serverHttps.listen( this.httpsPort, process.env.IP  );
+        this.serverHttp.listen( this.port, process.env.IP );
+        console.log(`Servidor corriendo en puertos ${this.port}, ${this.httpsPort}` );
+
     }
-
 }
-
-
-
 
 module.exports = Server;
