@@ -30,7 +30,6 @@ class Server {
             solicitud:  '/api/post-solicitud',
         }
 
-
         // Conectar a base de datos
         this.conectarDB();
 
@@ -58,10 +57,11 @@ class Server {
         this.app.use( express.json() );
         
         this.app.use( (req, res, next ) => {
-            if( req.secure ) 
+            if( req.secure || process.env.NODE_ENV === 'development') 
                 next();
-            else 
+            else {
                 res.redirect(`https://${req.headers.host}${req.url}`);
+            } 
         });
 
         // Directorio Público
