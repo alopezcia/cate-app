@@ -1,8 +1,10 @@
 const { request, response } = require('express');
 
 const insertarSolicitud = async (req = request, res = response ) => {
-    res.send('SOLICITUD');
+    console.log( req.body );
+    res.json({msg: 'ok'});
     // TODO
+    
     res.end();
 }
 
