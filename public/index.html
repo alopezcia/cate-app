@@ -246,8 +246,8 @@
               </div>
             </div>
             <div class="col-sm-6">
-              <label for="telefonMadre" class="form-label">Teléfono de la madre</label>
-              <input type="text" class="form-control" id="telefonMadre" name="telefonMadre" placeholder="" value="" required>
+              <label for="telefonoMadre" class="form-label">Teléfono de la madre</label>
+              <input type="text" class="form-control" id="telefonoMadre" name="telefonoMadre" placeholder="" value="" required>
               <div class="invalid-feedback">
                 El valor del teléfono de la madre es obligatorio
               </div>
@@ -483,9 +483,9 @@
             return;
   			}
   			postData("http://127.0.0.1:8080/api/post-solicitud", serialized).then((data) => {
-          // if( data.status >= 400 ){
-
-          // }
+          if( data.status >= 400 ){
+            Swal.fire({icon: 'error', title: 'Oops...', text: data.errors[0].msg, footer: 'Cumplimentar'});
+          }
           console.log(data); // JSON data parsed by `data.json()` call
         }).catch( (err) => {
           // Swal.fire({icon: 'error', title: 'Oops...', text: `El campo ${element} es obligatrio`, footer: 'Cumplimentar'});
