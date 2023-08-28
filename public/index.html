@@ -418,7 +418,9 @@
               referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
               body: JSON.stringify(data), // body data type must match "Content-Type" header
         });
-        return response.json(); // parses JSON response into native JavaScript objects
+        const resp = await response.json(); // parses JSON response into native JavaScript objects
+        
+        return { status: response.status, errors: resp['errors'] }; 
       }
 
 			const span = document.getElementById('coords');
@@ -442,7 +444,7 @@
 
 			  // Validaciones del formulario 
   			// 1º Aceptar protección de datos
-  			if( !serialized['acepta-trat'] ){
+  			if( !serialized['aceptaTrat'] ){
     			Swal.fire({icon: 'error',title: 'Debe aceptar la protección de datos'});
     			return;
   			}
@@ -481,7 +483,13 @@
             return;
   			}
   			postData("http://127.0.0.1:8080/api/post-solicitud", serialized).then((data) => {
+          // if( data.status >= 400 ){
+
+          // }
           console.log(data); // JSON data parsed by `data.json()` call
+        }).catch( (err) => {
+          // Swal.fire({icon: 'error', title: 'Oops...', text: `El campo ${element} es obligatrio`, footer: 'Cumplimentar'});
+          console.log( err );
         });
 
   			// const json = JSON.stringify( serialized );
