@@ -171,18 +171,12 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="apellidosPadre" class="form-label">Del padre apellidos</label>
-              <input type="text" class="form-control" id="apellidosPadre" id="apellidosPadre" name="apellidosPadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                    El valor para los apellidos del padre son obligatorios
-              </div>
+              <input type="text" class="form-control" id="apellidosPadre" id="apellidosPadre" name="apellidosPadre" placeholder="">
             </div>
 
             <div class="col-sm-6">
               <label for="nombrePadre" class="form-label">y nombre</label>
-              <input type="text" class="form-control" id="nombrePadre" name="nombrePadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                El valor del nombre del padre es obligatorio
-              </div>
+              <input type="text" class="form-control" id="nombrePadre" name="nombrePadre" placeholder="" value="">
             </div>
           </div>
 
@@ -190,17 +184,11 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="dniPadre" class="form-label">DNI del padre</label>
-              <input type="text" class="form-control" id="dniPadre" name="dniPadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                El dni del padre es obligatorio
-              </div>
+              <input type="text" class="form-control" id="dniPadre" name="dniPadre" placeholder="" value="">
             </div>
             <div class="col-sm-6">
               <label for="telefonoPadre" class="form-label">Teléfono del padre</label>
-              <input type="text" class="form-control" id="telefonoPadre" name="telefonoPadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                El valor del teléfono del padre es obligatorio
-              </div>
+              <input type="text" class="form-control" id="telefonoPadre" name="telefonoPadre" placeholder="" value="">
             </div>
           </div>
 
@@ -222,17 +210,11 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="apellidosMadre" class="form-label">De la madre apellidos</label>
-              <input type="text" class="form-control" id="apellidosMadre" name="apellidosMadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-              El valor para los apellidos de la madre son obligatorios
-              </div>
+              <input type="text" class="form-control" id="apellidosMadre" name="apellidosMadre" placeholder="" value="">
             </div>
             <div class="col-sm-6">
               <label for="nombreMadre" class="form-label">y nombre</label>
-              <input type="text" class="form-control" id="nombreMadre" name="nombreMadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                El valor del nombre de la madre es obligatorio
-              </div>
+              <input type="text" class="form-control" id="nombreMadre" name="nombreMadre" placeholder="" value="">
             </div>
           </div>
 
@@ -240,17 +222,11 @@
           <div class="row g-3">
             <div class="col-sm-6">
               <label for="dniMadre" class="form-label">DNI de la madre</label>
-              <input type="text" class="form-control" id="dniMadre" name="dniMadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                El valor del dni de la madre es obligatorio
-              </div>
+              <input type="text" class="form-control" id="dniMadre" name="dniMadre" placeholder="" value="">
             </div>
             <div class="col-sm-6">
               <label for="telefonoMadre" class="form-label">Teléfono de la madre</label>
-              <input type="text" class="form-control" id="telefonoMadre" name="telefonoMadre" placeholder="" value="" required>
-              <div class="invalid-feedback">
-                El valor del teléfono de la madre es obligatorio
-              </div>
+              <input type="text" class="form-control" id="telefonoMadre" name="telefonoMadre" placeholder="" value="">
             </div>
           </div>
 
@@ -273,7 +249,7 @@
               <label for="direccion" class="form-label">Dirección</label>
               <input type="text" class="form-control" id="direccion" name="direccion" placeholder="" value="" required>
               <div class="invalid-feedback">
-                El valor para la dirección de la  madre es obligatorio
+                El valor para la dirección es obligatorio
               </div>
             </div>
   
@@ -455,33 +431,56 @@
     			// event.stopPropagation();
     			let campoErroneo = '';
     			const campos=[ 
+    				'nombre',
     				'apellidos',
-    				'apellidosMadre',
-    				'apellidosPadre',
-    				'codpost',
+    				'fechaNacimiento',
     				'colegio',
     				'direccion',
-    				'dniMadre',
-    				'dniPadre',
+    				'codpost',
     				'email',
-    				'fechaNacimiento',
-    				'nombre',
-    				'nombreMadre',
-    				'nombrePadre',
-    				'telefonoMadre',
-    				'telefonoPadre',
     			];
-          let erroneos = 0;
-    			campos.forEach(element => {
+          campos.forEach(element => {
       			if( !serialized[element] ){
         		  Swal.fire({icon: 'error', title: 'Oops...', text: `El campo ${element} es obligatrio`, footer: 'Cumplimentar'});
               erroneos++;
       			}
     			});
+
           form.classList.add('was-validated');
           if( erroneos >  0 )
             return;
   			}
+        const nombreMadre = serialized['nombreMadre'];
+        const nombrePadre = serialized['nombrePadre'];
+        if( (!nombrePadre || nombrePadre.length === 0 ) && 
+              (!nombreMadre || nombreMadre.length === 0 ) )
+        {
+        		Swal.fire({icon: 'error', title: 'Oops...', text: 'Debe consignar el nombre del padre o de la madre', footer: 'Cumplimentar'});
+            return;
+  			}
+        const apellidosPadre = serialized['apellidosPadre'];
+        const apellidosMadre = serialized['apellidosMadre'];
+        if( (!apellidosPadre || apellidosPadre.length === 0) && 
+            (!apellidosMadre || apellidosMadre.length === 0)){
+        	  Swal.fire({icon: 'error', title: 'Oops...', text: 'Debe consignar los apellidos del padre o de la madre', footer: 'Cumplimentar'});
+            return;
+     		}
+        const dniPadre = serialized['dniPadre'];
+        const dniMadre = serialized['dniMadre'];
+        if( (!dniPadre || dniPadre.length === 0) && 
+            (!dniMadre || dniMadre.length === 0)){
+            Swal.fire({icon: 'error', title: 'Oops...', text: 'Debe consignar el DNI del padre o de la madre', footer: 'Cumplimentar'});
+            return;
+     		}
+        const telefonoPadre = serialized['telefonoPadre'];
+        const telefonoMadre = serialized['telefonoMadre'];
+        if( (!telefonoPadre || telefonoPadre.length === 0) && 
+             (!telefonoMadre || telefonoMadre.length === 0)){
+        	  Swal.fire({icon: 'error', title: 'Oops...', text: 'Debe consignar el teléfono del padre o de la madre', footer: 'Cumplimentar'});
+            return;
+     		}
+
+        // Postear los datos
   			postData("http://127.0.0.1:8080/api/post-solicitud", serialized).then((data) => {
           if( data.status >= 400 ){
             Swal.fire({icon: 'error', title: 'Oops...', text: data.errors[0].msg, footer: 'Cumplimentar'});
@@ -640,8 +639,6 @@
 
 			// Lanza todos los event 
 		modalEvents();
-
-    document.getElementById('comentarios').innerText = navigator.platform;
 
 	 </script>	
 
