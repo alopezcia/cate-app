@@ -166,6 +166,15 @@
             </div>
           </div>
 
+          <!-- Nombre y apellidos del padre -->
+          <div class="row g-3">
+            <div class="col-sm-12">
+              <label for="profesor" class="form-label">Nombre profesor religión</label>
+              <input type="text" class="form-control" id="profesor" name="profesor" placeholder="">
+            </div>
+          </div>
+
+          
           <hr>
           <!-- Nombre y apellidos del padre -->
           <div class="row g-3">
@@ -410,6 +419,15 @@
         // Añadimos las dos imagenes
         obj['firmadoPadre']=document.getElementById('firmadoPadre').src;
         obj['firmadoMadre']=document.getElementById('firmadoMadre').src;
+        if( document.getElementById('imagenDigitalNo').checked )
+          obj['imagenDigital'] = 'off';
+        if( document.getElementById('imagenImpresaNo').checked )
+          obj['imagenImpresa'] = 'off';
+        if( document.getElementById('comunicacionesNo').checked )
+          obj['comunicaciones'] = 'off';
+        if( document.getElementById('datosSaludNo').checked )
+          obj['datosSalud'] = 'off';
+
   			return obj;
 			};
 
@@ -420,7 +438,7 @@
   			const form = event.target;
   			const serialized = serializeForm(event.target);
 
-        console.log( serialized);
+        // console.log( serialized);
 
 			  // Validaciones del formulario 
   			// 1º Aceptar protección de datos
