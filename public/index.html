@@ -395,7 +395,6 @@
               body: JSON.stringify(data), // body data type must match "Content-Type" header
         });
         const resp = await response.json(); // parses JSON response into native JavaScript objects
-        
         return { status: response.status, errors: resp['errors'] }; 
       }
 
@@ -408,6 +407,9 @@
   			for( let key of formData.keys() ) {
 	        obj[key]=formData.get(key);
 			  }
+        // Añadimos las dos imagenes
+        obj['firmadoPadre']=document.getElementById('firmadoPadre').src;
+        obj['firmadoMadre']=document.getElementById('firmadoMadre').src;
   			return obj;
 			};
 
@@ -417,6 +419,8 @@
   			// console.log( event  );
   			const form = event.target;
   			const serialized = serializeForm(event.target);
+
+        console.log( serialized);
 
 			  // Validaciones del formulario 
   			// 1º Aceptar protección de datos
@@ -450,6 +454,13 @@
           if( erroneos >  0 )
             return;
   			}
+
+        // 3º Chequear  progenitores
+        if( serialized['firmadoPadre'].length === 0 && serialized['firmadoMadre'].length === 0  ){
+        		Swal.fire({icon: 'error', title: 'Oops...', text: 'Al menos uno de los progenitores debe firma la solicitud', footer: 'Cumplimentar'});
+            return;
+        }
+
         const nombreMadre = serialized['nombreMadre'];
         const nombrePadre = serialized['nombrePadre'];
         if( (!nombrePadre || nombrePadre.length === 0 ) && 
@@ -485,10 +496,9 @@
           if( data.status >= 400 ){
             Swal.fire({icon: 'error', title: 'Oops...', text: data.errors[0].msg, footer: 'Cumplimentar'});
           }
-          console.log(data); // JSON data parsed by `data.json()` call
         }).catch( (err) => {
           // Swal.fire({icon: 'error', title: 'Oops...', text: `El campo ${element} es obligatrio`, footer: 'Cumplimentar'});
-          console.log( err );
+          console.error( err );
         });
 
   			// const json = JSON.stringify( serialized );
@@ -515,11 +525,20 @@
   			context.clearRect(0, 0, canvas.width, canvas.height);
 			};
 
-			document.getElementById("reset").addEventListener("click", () => {
+			document.getElementById("reset").addEventListener("click", (event) => {
   			resetCanvas();
 			});
 
 			// Target => canvas
+
+      // isCanvasBlank - returns true if every pixel's uint32 representation is 0 (or "blank")
+      const  isCanvasBlank = (canvas) => {
+        const context = canvas.getContext('2d');
+          const pixelBuffer = new Uint32Array(
+            context.getImageData(0, 0, canvas.width, canvas.height).data.buffer );
+        return !pixelBuffer.some(color => color !== 0);
+      }
+
 			const updateMousePosition = (target, mX, mY) => {
      		const rect = target.getBoundingClientRect();
     		const scaleX = target.width / rect.width;
@@ -591,12 +610,17 @@
           canvas.addEventListener('touchmove', onMouseMove, false );
 
       	let i = document.getElementById('firmadoPadre');
-      	if(  this.progenitor === 'Madre'){
+        const progenitor = this['progenitor'];
+      	if(  progenitor === 'Madre'){
         	i = document.getElementById('firmadoMadre');
       	}
-      	const base64 = canvas.toDataURL();
-      	i.src = base64;
-      	resetCanvas();
+        if( isCanvasBlank(canvas)){
+          i.removeAttribute('src');
+        }
+        else {
+      	  i.src = canvas.toDataURL();
+      	  resetCanvas();
+        }
       	canvas.sign = false;
       	canvas.begin_sign = false;
       	canvas.cursorX = 0;
@@ -604,7 +628,7 @@
     	});
 
     $("#bookingmodal").on("show.bs.modal", function (event) {
-        // Esto es una "ñapa" para que funcione el firmado 
+      // Esto es una "ñapa" para que funcione el firmado 
         window.scroll(0,0);
 
         const canvas = document.getElementById('canvas');
@@ -620,8 +644,9 @@
         let i = document.getElementById('firmadoPadre');
         // En el button hay que añadir un attr. data-bs-p con valor Padre o Madre
         // Para saber que imagen hya que actualziar o de la que hay que dibujar en canvas 
-        this.progenitor = button.getAttribute('data-bs-p');
-        if(  this.progenitor === 'Madre'){
+        const progenitor = button.getAttribute('data-bs-p');
+        this['progenitor']=progenitor;
+        if(  progenitor === 'Madre'){
           i = document.getElementById('firmadoMadre');
         }
         if( i.src ){
