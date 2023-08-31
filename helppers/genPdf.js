@@ -14,7 +14,7 @@ const genPdf = (solicitud) =>{
 
     // Pipe its output somewhere, like to a file or HTTP response
     // See below for browser usage
-    doc.pipe(fs.createWriteStream('output.pdf'));
+    doc.pipe(fs.createWriteStream(`solicitud_${solicitud.uuid}.pdf` ));
 
 // Medidas del A4
 // doc.polygon([2, 2], [593, 2], [593, 840], [2, 840]);

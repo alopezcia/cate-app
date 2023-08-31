@@ -10,7 +10,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="./style.css" rel="stylesheet"/>
-
+    <script type="module">
+      import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
+      localStorage.setItem("uuid", uuidv4());
+    </script>
   </head>
 
   <body>
@@ -407,6 +410,48 @@
         return { status: response.status, errors: resp['errors'] }; 
       }
 
+      async function getPdf(uuid){
+        fetch( `http://127.0.0.1:8080/api/getPdf/${uuid}` )
+        .then( res=> res.blob() )
+        .then( blob =>{
+            const filename = `solicitud.pdf`;
+            if (typeof window.navigator.msSaveBlob !== 'undefined') {
+                // IE doesn't allow using a blob object directly as link href.
+                // Workaround for "HTML7007: One or more blob URLs were
+                // revoked by closing the blob for which they were created.
+                // These URLs will no longer resolve as the data backing
+                // the URL has been freed."
+                window.navigator.msSaveBlob(blob, filename);
+                return;
+            }
+            // Other browsers
+            // Create a link pointing to the ObjectURL containing the blob
+            const blobURL = window.URL.createObjectURL(blob);
+            const tempLink = document.createElement('a');
+            tempLink.style.display = 'none';
+            tempLink.href = blobURL;
+            tempLink.setAttribute('download', filename);
+            // Safari thinks _blank anchor are pop ups. We only want to set _blank
+            // target if the browser does not support the HTML5 download attribute.
+            // This allows you to download files in desktop safari if pop up blocking
+            // is enabled.
+            if (typeof tempLink.download === 'undefined') {
+                tempLink.setAttribute('target', '_blank');
+            }
+            document.body.appendChild(tempLink);
+            tempLink.click();
+            document.body.removeChild(tempLink);
+            setTimeout(() => {
+                // For Firefox it is necessary to delay revoking the ObjectURL
+                window.URL.revokeObjectURL(blobURL);
+            }, 100);
+
+        })
+        .catch(function(error) {
+            console.log('Hubo un problema con la petición Fetch:' + error.message);
+        });
+      }
+
 			const span = document.getElementById('coords');
 			const spanC = document.getElementById('coords-calc');
 
@@ -427,7 +472,7 @@
           obj['comunicaciones'] = 'off';
         if( document.getElementById('datosSaludNo').checked )
           obj['datosSalud'] = 'off';
-
+        obj['uuid']=localStorage.getItem("uuid");
   			return obj;
 			};
 
@@ -513,6 +558,20 @@
   			postData("http://127.0.0.1:8080/api/post-solicitud", serialized).then((data) => {
           if( data.status >= 400 ){
             Swal.fire({icon: 'error', title: 'Oops...', text: data.errors[0].msg, footer: 'Cumplimentar'});
+          } else {
+            Swal.fire({
+              title: `¿Quieres descargar el fichero ${serialized.uuid}.PDF generado?`,
+              showDenyButton: true,
+              showCancelButton: false,
+              confirmButtonText: 'Si',
+              denyButtonText: 'No',
+            }).then((result) => {
+              if (result.isConfirmed) {
+                getPdf(serialized.uuid);
+                Swal.fire('Descargado!', '', 'success')
+              }
+               window.location = "https://www.parroquiasdesanvicente.es/";
+            });
           }
         }).catch( (err) => {
           // Swal.fire({icon: 'error', title: 'Oops...', text: `El campo ${element} es obligatrio`, footer: 'Cumplimentar'});

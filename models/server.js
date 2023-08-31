@@ -81,7 +81,17 @@ class Server {
     routes() {
         this.app.use( this.paths.cert, require('../routes/redirecter'));
         this.app.use( this.paths.qr, require('../routes/redirecter'))
-        this.app.use( this.paths.solicitud, require('../routes/solicitudes') );        
+        this.app.use( this.paths.solicitud, require('../routes/solicitudes') ); 
+        this.app.get( '/api/getPdf/:uuid', 
+            ( req = express.request, res = express.response)=>{
+                const uuid = req.params.uuid;
+                const pdf = `./solicitud_${uuid}.pdf`;
+                if( fs.existsSync(pdf)){
+                    res.download(pdf, (err)=>{
+                        res.status(404).send(err);
+                    }); 
+                } else 
+                    res.status(404).send(`Error 404 - ${pdf} no encontrado`); });
     }
 
     listen() {
