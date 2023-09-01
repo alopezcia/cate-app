@@ -746,13 +746,22 @@
 		}
 
       const firmaConCertificado = (quien) => {
-        let ocultar;
-        
-        if( quien === 'Padre') 
-          ocultar = document.getElementById('certificadoMadre');
-        else
-        ocultar = document.getElementById('certificadoPadre');
-        ocultar.setAttribute("hidden", "hidden");
+        fetch( `http://127.0.0.1:8080/api/get-QRCert` )
+          .then( res => res.text() )
+          .then( data =>{  
+            let ocultar;
+            let img;
+            if( quien === 'Padre'){
+              ocultar = document.getElementById('certificadoMadre');
+              img = document.getElementById('firmadoPadre');
+            } 
+            else {
+              ocultar = document.getElementById('certificadoPadre');
+              img = document.getElementById('firmadoMadre');
+            }
+            ocultar.setAttribute("hidden", "hidden");
+            img.src = data;
+          });
       }
 
 			// Lanza todos los event 
