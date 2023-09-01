@@ -36,3 +36,8 @@ canvas {
   width: 100%;
   height: auto;
 }
+
+.redondeado {
+  border-radius: 30%;
+  background-color: rgb(11, 202, 235);
+}

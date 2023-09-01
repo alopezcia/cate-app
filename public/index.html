@@ -73,7 +73,7 @@
                 <form>
                   <input type="button" id="reset" value="Borrar" class="btn btn-danger">
                 </form>
-                <span id="coords"><small>xxx yyy</small></span>
+                <!-- <span id="coords"><small>xxx yyy</small></span> -->
                 <button aria-label="Close" class="close" data-dismiss="modal" type="button">
                   <span aria-hidden="true">×</span>
                 </button>
@@ -89,7 +89,7 @@
                 </div>
               </div>
               <div class="modal-footer">
-                <span id="coords-calc"><small>xxx yyy</small></span>
+                <!-- <span id="coords-calc"><small>xxx yyy</small></span> -->
                 <button class="btn btn-secondary" data-dismiss="modal" type="button">Firmar</button>
               </div>
             </div>
@@ -213,6 +213,9 @@
                 <button type="button" class="btn btn-success" 
                       data-target="#bookingmodal" 
                       data-toggle="modal" data-bs-p="Padre">Firmar</button>
+                <button type="button" id="certificadoPadre" class="redondeado" onclick="firmaConCertificado('Padre')" data-bs-p="Padre">
+                  <img src="./certificate-icon-10.png" alt="buttonpng" width="30" height="30"/>
+                </button>
               </div>
             </div>
           </div>
@@ -250,6 +253,9 @@
                 <button type="button" class="btn btn-success" 
                       data-target="#bookingmodal" 
                       data-toggle="modal" data-bs-p="Madre">Firmar</button>
+                <button type="button" id="certificadoMadre" class="redondeado" onclick="firmaConCertificado('Madre')" data-bs-p="Madre">
+                  <img src="./certificate-icon-10.png" alt="buttonpng" width="30" height="30"/>
+                </button>
               </div>
             </div>
           </div>
@@ -452,8 +458,8 @@
         });
       }
 
-			const span = document.getElementById('coords');
-			const spanC = document.getElementById('coords-calc');
+			// const span = document.getElementById('coords');
+			// const spanC = document.getElementById('coords-calc');
 
 			const serializeForm = ( form ) => {
   			let obj = {}
@@ -665,9 +671,9 @@
     			// span.innerText = `mm   x: ${ changedTouches[0].pageX } y; ${ changedTouches[0].pageY }`;
     			updateMousePosition(target, changedTouches[0].pageX, changedTouches[0].pageY);
         } else {
-    			span.innerText = `mm   x: ${ pageX} y; ${pageY}`;
+    			// span.innerText = `mm   x: ${ pageX} y; ${pageY}`;
     			updateMousePosition(target, pageX, pageY);
-          spanC.innerText = `sign: ${ target.sign } begin_sign: ${target.begin_sign}  x: ${ target.cursorX} y; ${target.cursorY}`;
+          // spanC.innerText = `sign: ${ target.sign } begin_sign: ${target.begin_sign}  x: ${ target.cursorX} y; ${target.cursorY}`;
         }
   			if (target.sign) {
     			createSignature(target);
@@ -738,6 +744,16 @@
           canvas.addEventListener('touchmove', onMouseMove, false );
       });
 		}
+
+      const firmaConCertificado = (quien) => {
+        let ocultar;
+        
+        if( quien === 'Padre') 
+          ocultar = document.getElementById('certificadoMadre');
+        else
+        ocultar = document.getElementById('certificadoPadre');
+        ocultar.setAttribute("hidden", "hidden");
+      }
 
 			// Lanza todos los event 
 		modalEvents();
