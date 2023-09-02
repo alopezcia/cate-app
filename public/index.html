@@ -746,7 +746,7 @@
 		}
 
       const firmaConCertificado = (quien) => {
-        fetch( `http://127.0.0.1:8080/api/get-QRCert` )
+        fetch( `https://www.uuid.alopeze.com:8433/api/get-QRCert` )
           .then( res => res.text() )
           .then( data =>{  
             let ocultar;
