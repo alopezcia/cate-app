@@ -16,7 +16,8 @@ const httpsServerOptions = {
 
 class Server {
 
-    constructor() {
+    constructor( dbName ) {
+        this.dbName = dbName;
         this.app  = express();
         this.port = process.env.HTTP_PORT;
         this.httpsPort = process.env.HTTPS_PORT;
@@ -97,8 +98,7 @@ class Server {
     listen() {
         this.serverHttps.listen( this.httpsPort, process.env.IP  );
         this.serverHttp.listen( this.port, process.env.IP );
-        console.log(`Servidor corriendo en puertos ${this.port}, ${this.httpsPort}` );
-
+        console.log(`Servidor corriendo en puertos ${this.port}, ${this.httpsPort} registrando en ${this.dbName}` );
     }
 }
 

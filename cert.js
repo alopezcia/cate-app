@@ -46,7 +46,7 @@ if( !fs.existsSync(dbName)){
         const db = new sqlite3.Database(dbName);
         const createTable = 
             'CREATE TABLE IF NOT EXISTS certs('+
-                'id INTEGER PRIMARY KEY AUTOINCREMENT, '+
+                'uuid varchar(36) PRIMARY KEY, '+
                 'cert text NOT NULL, '+
                 'registro DATETIME DEFAULT CURRENT_TIMESTAMP)';
         db.run(createTable);
@@ -90,20 +90,21 @@ serverHttps.listen( process.env.API_HTTPS_PORT, process.env.IP );
 app.get('/api/get-cert', async (req, res) => { 
     const cert = req.socket.getPeerCertificate(true);
     const b64  = cert.raw.toString('base64');
-    const db = new sqlite3.Database(dbName);
-    const qry = `INSERT INTO certs(cert) VALUES('${b64}')`;
-    db.run(qry);
-    db.close();
+    // const db = new sqlite3.Database(dbName);
+    // const qry = `INSERT INTO certs(cert) VALUES('${b64}')`;
+    // db.run(qry);
+    // db.close();
     res.send( `Hola ${cert.subject.CN}, tu certificado te fue concedido por ${cert.issuer.CN}!` );
 });
 
-app.get('/api/get-QRCert', async (req, res) => { 
+app.get('/api/get-QRCert/:uuid', async (req, res) => { 
+    const uuid = req.params.uuid;
     const cert = req.socket.getPeerCertificate(true);
     const {subject, issuer, valid_to, serialNumber } = cert;
     const toQR = { subject, issuer, valid_to, serialNumber };
     const b64  = cert.raw.toString('base64');
     const db = new sqlite3.Database(dbName);
-    const qry = `INSERT INTO certs(cert) VALUES('${b64}')`;
+    const qry = `INSERT INTO certs(uuid, cert) VALUES('${uuid}','${b64}')`;
     db.run(qry);
     db.close();
     qr.toDataURL(JSON.stringify(toQR), (err, src) => {
