@@ -417,7 +417,7 @@
       }
 
       async function getPdf(uuid){
-        fetch( `http://127.0.0.1:8080/api/getPdf/${uuid}` )
+        fetch( `/api/getPdf/${uuid}` )
         .then( res=> res.blob() )
         .then( blob =>{
             const filename = `solicitud.pdf`;
@@ -561,7 +561,7 @@
      		}
 
         // Postear los datos
-  			postData("http://127.0.0.1:8080/api/post-solicitud", serialized).then((data) => {
+  			postData('/api/post-solicitud', serialized).then((data) => {
           if( data.status >= 400 ){
             Swal.fire({icon: 'error', title: 'Oops...', text: data.errors[0].msg, footer: 'Cumplimentar'});
           } else {
@@ -746,7 +746,10 @@
 		}
 
       const firmaConCertificado = (quien) => {
-        fetch( `https://www.uuid.alopeze.com:8443/api/get-QRCert` )
+        const host = window.location.host.split(':')[0];
+        const url = `https://${host}:8443/api/get-QRCert`
+        console.log( `Url: ${url}` );
+        fetch( url )
           .then( res => res.text() )
           .then( data =>{  
             let ocultar;
