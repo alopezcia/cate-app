@@ -2,3 +2,4 @@ node_modules/
 dbCert/
 .env
 *.pdf
+package-lock.json
