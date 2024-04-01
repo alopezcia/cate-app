@@ -97,8 +97,8 @@ app.get('/api/get-cert', async (req, res) => {
     res.send( `Hola ${cert.subject.CN}, tu certificado te fue concedido por ${cert.issuer.CN}!` );
 });
 
-app.get('/api/get-QRCert/:uuid', async (req, res) => { 
-    const uuid = req.params.uuid;
+app.get('/api/get-QRCert', async (req, res) => { 
+    const uuid = req.query.uuid;
     const cert = req.socket.getPeerCertificate(true);
     const {subject, issuer, valid_to, serialNumber } = cert;
     const toQR = { subject, issuer, valid_to, serialNumber };
