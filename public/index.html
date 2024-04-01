@@ -458,8 +458,6 @@
         });
       }
 
-			// const span = document.getElementById('coords');
-			// const spanC = document.getElementById('coords-calc');
 
 			const serializeForm = ( form ) => {
   			let obj = {}
@@ -593,9 +591,6 @@
   			event.preventDefault();
 			};
 
-			const form = document.getElementById("main-form");
-			form.addEventListener("submit", mainFormSubmitted);
-
 			const resetCanvas = () => {
   			const canvas = document.getElementById('canvas');
   			canvas.width_line = 1;
@@ -607,10 +602,6 @@
   			const context = canvas.getContext('2d');
   			context.clearRect(0, 0, canvas.width, canvas.height);
 			};
-
-			document.getElementById("reset").addEventListener("click", (event) => {
-  			resetCanvas();
-			});
 
 			// Target => canvas
 
@@ -746,10 +737,12 @@
 		}
 
       const firmaConCertificado = (quien) => {
+        const u = localStorage.getItem('uuid');
+        console.log(u);
         const host = window.location.host.split(':')[0];
-        const url = `https://${host}:8443/api/get-QRCert`
+        const url = `https://${host}:8443/api/get-QRCert?`+ new URLSearchParams({uuid: u})
         console.log( `Url: ${url}` );
-        fetch( url )
+        fetch( url  )
           .then( res => res.text() )
           .then( data =>{  
             let ocultar;
@@ -767,7 +760,18 @@
           });
       }
 
-			// Lanza todos los event 
+      // Comienzo 
+			// const span = document.getElementById('coords');
+			// const spanC = document.getElementById('coords-calc');
+
+      const form = document.getElementById("main-form");
+			form.addEventListener("submit", mainFormSubmitted);
+
+			document.getElementById("reset").addEventListener("click", (event) => {
+  			resetCanvas();
+			});
+
+			// Ajusta varios eventos del dialogo modal 
 		modalEvents();
 
 	 </script>	
