@@ -10,6 +10,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@signpdf/placeholder-pdf-lib": "^3.2.4",
+    "@signpdf/placeholder-plain": "^3.2.4",
     "@signpdf/signer-p12": "^3.2.4",
     "@signpdf/signpdf": "^3.2.4",
     "adm-zip": "^0.5.10",
