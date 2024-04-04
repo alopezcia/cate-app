@@ -1,162 +1,198 @@
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
+const signpdf = require('@signpdf/signpdf').default;
+const signer = require('@signpdf/signer-p12').P12Signer;
+const path = require('path');
+const pdfkitAddPlaceholder = require('@signpdf/placeholder-pdfkit010').pdfkitAddPlaceholder;
 
-const genPdf = (solicitud) =>{
-    // Create a document
-    const doc = new PDFDocument({
-        size: 'A4', 
+const genPdf = (solicitud, keystore) =>{
+    // Start a PDFKit document
+    const pdf = new PDFDocument({
+        autoFirstPage: false,
+        size: 'A4',
+        layout: 'portrait',
+        bufferPages: true,
         margins: {
             top: 20,
             bottom: 2,
             left: 20,
             right: 40
-            }});
+            }        
+    });
+    pdf.info.CreationDate = '';
 
-    // Pipe its output somewhere, like to a file or HTTP response
-    // See below for browser usage
-    doc.pipe(fs.createWriteStream(`solicitud_${solicitud.uuid}.pdf` ));
+    // At the end we want to convert the PDFKit to a string/Buffer and store it in a file.
+    // Here is how this is going to happen:
+    const pdfReady = new Promise(function (resolve) {
+        // Collect the ouput PDF
+        // and, when done, resolve with it stored in a Buffer
+        const pdfChunks = [];
+        pdf.on('data', function (data) {
+            pdfChunks.push(data);
+        });
+        pdf.on('end', function () {
+            resolve(Buffer.concat(pdfChunks));
+        });
+    });
 
-// Medidas del A4
-// doc.polygon([2, 2], [593, 2], [593, 840], [2, 840]);
-// doc.stroke();
-
-// Embed a font, set the font size, and render some text
-// doc
-//   .font('Helvetica-Bold')
-//   .fontSize(14)
-//   .text('FICHA DE INSCRIPCIÓN CATEQUESIS DE LA COMUNIDAD 2022/2023', {
-//     align: 'center'
-//    });
-
-// // Add an image, constrain it to a given size, and center it vertically and horizontally
-// doc.image('public/iglesia_parroquial_sant_vicent_ferrer.png', 10, 35, {
-//   fit: [5, 37],
-//   align: 'center',
-//   valign: 'center'
-//});
-
-    doc.image('public/hoja.png', 0, 0, {
+    pdf.image('public/hoja.png', 0, 0, {
         fit: [595, 841],
         align: 'center',
         valign: 'center'
     });
 
     // Parroquia
-    doc
+    pdf
     .font('Helvetica')
     .fontSize(10)
     .text(solicitud.parroquia, 179, 45 );
 
     // Nivel
-    doc.text(solicitud.nivel, 179, 70);
+    pdf.text(solicitud.nivel, 179, 70);
 
     // Apellidos niñ@
-    doc.text(solicitud.apellidos, 110, 90);
+    pdf.text(solicitud.apellidos, 110, 90);
 
     // Nombre  niñ@
-    doc.text(solicitud.nombre, 435, 90);
+    pdf.text(solicitud.nombre, 435, 90);
 
     // parroquia bautizo
-    doc.text(solicitud.bautizo, 143, 116);
+    pdf.text(solicitud.bautizo, 143, 116);
 
     // fecha nacimiento
-    doc.text(solicitud.fechaNacimiento, 488, 116);
+    pdf.text(solicitud.fechaNacimiento, 488, 116);
 
     // colegio actual
-    doc.text(solicitud.colegio, 90, 140);
+    pdf.text(solicitud.colegio, 90, 140);
 
     // curso escolar
-    doc.text(solicitud.curso, 384, 140);
+    pdf.text(solicitud.curso, 384, 140);
 
     // nombre del profesor de religión
-    doc.text(solicitud.profesor, 144, 166);
+    pdf.text(solicitud.profesor, 144, 166);
 
     // apellidos padre
-    doc.text(solicitud.apellidosPadre, 110, 190);
+    pdf.text(solicitud.apellidosPadre, 110, 190);
 
     // nombre padre
-    doc.text(solicitud.nombrePadre, 430, 190);
+    pdf.text(solicitud.nombrePadre, 430, 190);
 
     // telefono padre 
-    doc.text(solicitud.telefonoPadre, 144, 216);
+    pdf.text(solicitud.telefonoPadre, 144, 216);
 
     // dni padre 
-    doc.text(solicitud.dniPadre, 395, 216);
+    pdf.text(solicitud.dniPadre, 395, 216);
 
     // apellidos madre 
-    doc.text(solicitud.apellidosMadre, 115, 242);
+    pdf.text(solicitud.apellidosMadre, 115, 242);
 
     // nombre madre
-    doc.text(solicitud.nombreMadre, 430, 242);
+    pdf.text(solicitud.nombreMadre, 430, 242);
 
     // telefono madre 
-    doc.text(solicitud.telefonoMadre, 144, 268);
+    pdf.text(solicitud.telefonoMadre, 144, 268);
 
     // dni madre 
-    doc.text(solicitud.dniMadre, 395, 268);
+    pdf.text(solicitud.dniMadre, 395, 268);
 
     // dirección
-    doc.text(solicitud.direccion, 76, 294);
+    pdf.text(solicitud.direccion, 76, 294);
 
     // codigo postal 
-    doc.text(solicitud.codpost, 488, 294);
+    pdf.text(solicitud.codpost, 488, 294);
 
     // email
-    doc.text(solicitud.email, 76, 318);
+    pdf.text(solicitud.email, 76, 318);
 
     // alergias
-    doc.text(solicitud.alergias, 28, 352);
+    pdf.text(solicitud.alergias, 28, 352);
 
     // comentiarios
-    doc.text(solicitud.comentarios, 28, 410);
+    pdf.text(solicitud.comentarios, 28, 410);
 
     // si , imagen  
     if(solicitud.imagenDigital === 'on' )
-        doc.text('X', 469, 471);
+        pdf.text('X', 469, 471);
     else
         // no , imagen  
-        doc.text('X', 520, 471);
+        pdf.text('X', 520, 471);
 
     // si , imagen  
     if(solicitud.imagenImpresa === 'on' )
-        doc.text('X', 469, 496);
+        pdf.text('X', 469, 496);
     else
         // no , imagen  
-        doc.text('X', 520, 496);
+        pdf.text('X', 520, 496);
 
     // si , comunicaciones
     if(solicitud.comunicaciones === 'on' )
-        doc.text('X', 469, 520);
+        pdf.text('X', 469, 520);
     else
         // no , comunicaciones  
-        doc.text('X', 520, 520);
+        pdf.text('X', 520, 520);
 
     // si , datosSalud
     if( solicitud.datosSalud === 'on' )
         doc.text('X', 469, 548);
     else
         // no , imagen  
-        doc.text('X', 520, 548);
+        pdf.text('X', 520, 548);
 
     // ACEPTO  
-    doc.text('X', 44, 600);
+        pdf.text('X', 44, 600);
 
 
     // Firma Padre  
     if( solicitud.firmadoPadre.length > 0  ){
-        doc.image( solicitud.firmadoPadre, 44, 750, {width: 100, height: 50} );
-        doc.text(`${solicitud.apellidosPadre}, ${solicitud.nombrePadre}`, 63, 820);
+        pdf.image( solicitud.firmadoPadre, 44, 750, {width: 100, height: 50} );
+        pdf.text(`${solicitud.apellidosPadre}, ${solicitud.nombrePadre}`, 63, 820);
     }
 
     // Firma Madre  
     if( solicitud.firmadoMadre.length > 0 ){
-        doc.image(solicitud.firmadoMadre, 358, 750, {width: 100, height: 50} );
-        doc.text(`${solicitud.apellidosMadre}, ${solicitud.nombreMadre}`, 373, 820);
+        pdf.image(solicitud.firmadoMadre, 358, 750, {width: 100, height: 50} );
+        pdf.text(`${solicitud.apellidosMadre}, ${solicitud.nombreMadre}`, 373, 820);
     }
 
 
-    // Finalize PDF file
-    doc.end();
+    pdf.save();
+
+    // Here comes the signing. We need to add the placeholder so that we can later sign.
+    const refs = pdfkitAddPlaceholder({
+        pdf: pdf,
+        pdfBuffer: Buffer.from([pdf]), // FIXME: This shouldn't be needed.
+        reason: 'Showing off.',
+        contactInfo: 'signpdf@example.com',
+        name: 'Sign PDF',
+        location: 'The digital world.',
+    });
+    // `refs` here contains PDFReference objects to signature, form and widget.
+    // PDFKit doesn't know much about them, so it won't .end() them. We need to do that for it.
+    Object.keys(refs).forEach(function (key) {
+        refs[key].end()
+    });
+
+    // Once we .end the PDFDocument, the `pdfReady` Promise will resolve with
+    // the Buffer of a PDF that has a placeholder for signature that we need.
+    // Other that we will also need a certificate
+    // certificate.p12 is the certificate that is going to be used to sign
+    const certificatePath = path.join(__dirname, keystore );
+    const certificateBuffer = fs.readFileSync(certificatePath);
+    const signer = new P12Signer(certificateBuffer);
+    
+    // Once the PDF is ready we need to sign it and eventually store it on disc.
+    pdfReady
+        .then(function (pdfWithPlaceholder) {
+            return signpdf.sign(pdfWithPlaceholder, signer, 'Aguas123');
+        })
+        .then(function (signedPdf) {
+            var targetPath = path.join(__dirname, `./output/${solicitud}.pdf`);
+            fs.writeFileSync(targetPath, signedPdf);
+        });
+
+    // Finally end the PDFDocument stream.
+    pdf.end();
+    // This has just triggered the `pdfReady` Promise to be resolved.
 }
 
 module.exports = {
