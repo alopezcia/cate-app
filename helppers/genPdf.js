@@ -35,11 +35,11 @@ const genPdf = (solicitud, keystore) =>{
         });
     });
 
-    pdf.image('public/hoja.png', 0, 0, {
-        fit: [595, 841],
-        align: 'center',
-        valign: 'center'
-    });
+    // pdf.image('public/hoja.png', 0, 0, {
+    //     fit: [595, 841],
+    //     align: 'center',
+    //     valign: 'center'
+    // });
 
     // Parroquia
     pdf
