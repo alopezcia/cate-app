@@ -3,7 +3,7 @@ const fs = require('fs');
 const signpdf = require('@signpdf/signpdf').default;
 const signer = require('@signpdf/signer-p12').P12Signer;
 const path = require('path');
-const pdfkitAddPlaceholder = require('@signpdf/placeholder-pdfkit010').pdfkitAddPlaceholder;
+const pdfkitAddPlaceholder = require('@signpdf/placeholder-pdfkit').pdfkitAddPlaceholder;
 
 const genPdf = (solicitud, keystore) =>{
     // Start a PDFKit document
@@ -35,11 +35,11 @@ const genPdf = (solicitud, keystore) =>{
         });
     });
 
-    // pdf.image('public/hoja.png', 0, 0, {
-    //     fit: [595, 841],
-    //     align: 'center',
-    //     valign: 'center'
-    // });
+    pdf.image('public/hoja.png', 0, 0, {
+        fit: [595, 841],
+        align: 'center',
+        valign: 'center'
+    });
 
     // Parroquia
     pdf
