@@ -1,5 +1,6 @@
 node_modules/
 dbCert/
+output/
 .env
 *.pdf
 package-lock.json
