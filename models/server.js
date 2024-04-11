@@ -86,7 +86,8 @@ class Server {
         this.app.get( '/api/getPdf/:uuid', 
             ( req = express.request, res = express.response)=>{
                 const uuid = req.params.uuid;
-                const pdf = `./solicitud_${uuid}.pdf`;
+
+                const pdf = `./pdfSigneds/solicitud_${uuid}.pdf`;
                 if( fs.existsSync(pdf)){
                     res.download(pdf, (err)=>{
                         res.status(404).send(err);

@@ -1,6 +1,8 @@
 node_modules/
 dbCert/
 output/
+pdfSigneds/
 .env
 *.pdf
+*.p12
 package-lock.json
