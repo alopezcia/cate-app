@@ -35,7 +35,7 @@ const genPdf = (solicitud) =>{
 //   valign: 'center'
 //});
 
-    doc.image('public/hoja.png', 0, 0, {
+    doc.image('./public/hoja.png', 0, 0, {
         fit: [595, 841],
         align: 'center',
         valign: 'center'
