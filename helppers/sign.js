@@ -29,6 +29,10 @@ const sign = (uuid, certificatePath ) => {
             // signedPdf is a Buffer of an electronically signed PDF. Store it.
             const targetPath = `./pdfSigneds/solicitud_${uuid}.pdf`; 
             fs.writeFileSync(targetPath, signedPdf);
+            // Para borrar el fichero 
+            const tempFile = fs.openSync(pdfFile, 'r');
+            fs.closeSync(tempFile);
+            fs.unlinkSync(pdfFile);
         })
 }
 
