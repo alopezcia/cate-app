@@ -5,38 +5,43 @@ require('dotenv').config();
 const Server = require('./models/server');
 
 const initializeSQLite = () =>{
-    const fecha = new Date().toJSON().slice(0,10).replaceAll('-', '').replaceAll('/','');
-    const dbName = `./dbCert/${fecha}_cert.db3`;
-    const allDbZip = './dbCert/allDbCertZip.zip';
+    const dbName = `./dbCert/inscripciones.db3`;
     
-    // Borrar el zip de todas las db para volver a crearlo
-    if( fs.existsSync(allDbZip) ){ 
-        try{
-            fs.unlinkSync(allDbZip);
-        }catch( err ){
-            console.log(err);
-        }
-    }
-    // Crear el zip de todas las db3 
-    try {
-        const zip = new admzip();
-        zip.addLocalFolder('./dbCert');
-        zip.writeZip( allDbZip )
-        // console.log(`Creado fichero comprimido ${allDbZip}`);    
-    } catch( err ){
-        console.log(err);
-    }
-
     if( !fs.existsSync(dbName)){
         fs.open( dbName, 'w', (err, file ) =>{
             if (err) throw err;
             console.log(`File ${dbName} is opened in write mode.`);
             const db = new sqlite3.Database(dbName);
             const createTable = 
-                'CREATE TABLE IF NOT EXISTS certs('+
+                'CREATE TABLE IF NOT EXISTS inscripciones('+
                     'uuid varchar(36) PRIMARY KEY, '+
-                    'cert text NOT NULL, '+
-                    'registro DATETIME DEFAULT CURRENT_TIMESTAMP)';
+                    'registro DATETIME DEFAULT CURRENT_TIMESTAMP, '+
+                    'parroquia text NOT NULL, '+
+                    'nivel text NOT NULL, '+
+                    'apellidosn text NOT NULL, '+
+                    'nombren text NOT NULL, '+
+                    'bautizo text NOT NULL, '+
+                    'nacimiento DATETIME NOT NULL, '+
+                    'colegio text NOT NULL, '+
+                    'curso text NOT NULL, '+
+                    'profesor text NOT NULL, '+
+                    'apellidosp text, '+
+                    'nombrep text, '+
+                    'telefonop text, '+
+                    'dnip text, '+
+                    'apellidosm text, '+
+                    'nombrem text, '+
+                    'telefonom text, '+
+                    'dnim text, '+
+                    'direccion text NOT NULL, '+
+                    'codpost text NOT NULL, '+
+                    'email text NOT NULL, '+
+                    'alergias text, '+
+                    'comentarios text, '+
+                    'protdatos1 char(3), '+
+                    'protdatos2 char(3), '+
+                    'protdatos3 char(3), '+
+                    'protdatos4 char(3))';
             db.run(createTable);
             db.close();
         });
