@@ -6,3 +6,5 @@ pdfSigneds/
 *.pdf
 *.p12
 package-lock.json
+*.key
+*.crt 
