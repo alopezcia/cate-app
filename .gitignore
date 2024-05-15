@@ -2,6 +2,7 @@ node_modules/
 dbCert/
 output/
 pdfSigneds/
+uploads/
 .env
 *.pdf
 *.p12

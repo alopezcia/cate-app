@@ -5,8 +5,7 @@ const compression = require('compression');
 const http   = require('http');
 const https   = require('https');
 const fs = require('fs');
-
-// const fileUpload = require('express-fileupload');
+const upload = require('../middlewares/upload');
 
 // const { dbConnection } = require('../database/config');
 const httpsServerOptions = {
@@ -68,15 +67,7 @@ class Server {
         // Directorio Público
         this.app.use( express.static('public') );
 
-        // Fileupload - Carga de archivos
-        // this.app.use( fileUpload({
-        //     useTempFiles : true,
-        //     tempFileDir : '/tmp/',
-        //     createParentPath: true
-        // }));
-
     }
-
     
 
     routes() {
@@ -94,6 +85,15 @@ class Server {
                     }); 
                 } else 
                     res.status(404).send(`Error 404 - ${pdf} no encontrado`); });
+        this.app.post('/upload', upload.single('file'), (req, res) => {
+            const name = req.body["name"];
+            const file = req["file"];
+            const ext = file.mimetype.substring( 6 );
+            fs.rename(file.path, `uploads\\${name}.${ext}`, (err) => { if( err) console.error(err) } );
+            // TODO - renombrar el fichero 
+            res.json({ message: 'File uploaded successfully!' });
+        });
+                
     }
 
     listen() {
