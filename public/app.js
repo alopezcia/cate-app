@@ -4,7 +4,6 @@ const formSelectFileChange = () => {
     if(files.files.length === 1 ) {
       btn.disabled=false;
       btn.hidden=false;
-      localStorage.setItem('upload', true );
     } else {
       btn.disabled=true;
       btn.hidden=true;
