@@ -89,7 +89,8 @@ class Server {
             const name = req.body["name"];
             const file = req["file"];
             const ext = file.mimetype.substring( 6 );
-            fs.rename(file.path, `uploads/${name}.${ext}`, (err) => { if( err) console.error(err) } );
+            const newName = 'uploads/' + `${name}.${ext}`;
+            fs.rename(file.path, newName, (err) => { if( err) console.error(err) } );
             // TODO - renombrar el fichero 
             res.json({ message: 'File uploaded successfully!' });
         });
