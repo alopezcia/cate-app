@@ -155,6 +155,22 @@ const genPdf = (solicitud) =>{
     }
 
 
+    const pago = './uploads/' + solicitud.uuid;
+    let pagoFile = pago + '.png';
+    if( !fs.existsSync(pagoFile) ){
+        pagoFile = pago+ '.jpg';
+        if( !fs.existsSync(pagoFile) ){
+            pagoFile = pago+ '.jpeg';
+        }
+    }
+    if( fs.existsSync(pagoFile) ){
+        doc.addPage().image(pagoFile, 0, 0, {
+            fit: [595, 841],
+            align: 'center',
+            valign: 'center'
+        });
+    }
+
     // Finalize PDF file
     doc.end();
 }

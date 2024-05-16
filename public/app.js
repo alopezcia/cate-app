@@ -29,8 +29,15 @@ const submitUpload = (event) => {
         referrerPolicy: "no-referrer",
         body: formData, 
       })
-      .then( (res) => localStorage.setItem("upload", true ) )
-      .catch( (err) => ("Error occured", err) )
+      .then( (res) => {
+        localStorage.setItem("upload", true );
+        document.getElementById('uploadBtn').hidden=true;
+        Swal.fire({icon: 'success', title: 'Upload', text: 'Fichero subido correctamente'});
+      })
+      .catch( (err) => {
+        localStorage.removeItem('upload');
+        Swal.fire({icon: 'error', title: 'Oops...', text: 'Error subiendo fichero', footer: 'Cumplimentar'});
+        return ("Error occured", err)} )
     }
 }
 
