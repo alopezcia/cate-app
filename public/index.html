@@ -412,7 +412,13 @@
    </div>
   
 	 <script>
-      // Example POST method implementation:
+      const isMac = navigator.platform.toUpperCase().indexOf('MAC')>=0;
+      if( isMac ){
+        document.getElementById('certificadoPadre').hidden=true;
+        document.getElementById('certificadoMadre').hidden=true;
+      }
+
+
       document.getElementById('formFile').onchange = formSelectFileChange;
       document.getElementById("formFile").addEventListener("submit", submitUpload );
       document.getElementById("main-form").addEventListener("submit", mainFormSubmitted);
