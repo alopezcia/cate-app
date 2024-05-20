@@ -12,7 +12,7 @@
     <link href="./style.css" rel="stylesheet"/>
     <script type="module">
       import { v4 as uuidv4 } from 'https://jspm.dev/uuid';
-//      if( !localStorage.getItem("uuid"))
+      if( !localStorage.getItem("uuid"))
         localStorage.setItem("uuid", uuidv4());
       localStorage.removeItem("upload");
     </script>
