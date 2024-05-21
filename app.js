@@ -14,8 +14,7 @@ const initializeSQLite = () =>{
             const db = new sqlite3.Database(dbName);
             const createTable = 
                 'CREATE TABLE IF NOT EXISTS inscripciones('+
-                    'id  INTEGER PRIMARY KEY AUTOINCREMENT,'
-//                    'uuid varchar(36) PRIMARY KEY, '+
+                    'id  INTEGER PRIMARY KEY AUTOINCREMENT,'+
                     'registro DATETIME DEFAULT CURRENT_TIMESTAMP, '+
                     'parroquia text NOT NULL, '+
                     'nivel text NOT NULL, '+
