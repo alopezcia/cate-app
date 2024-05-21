@@ -45,6 +45,7 @@ const initializeSQLite = () =>{
                     'protdatos4 char(3))';
             db.run(createTable);
             db.close();
+console.log( createTable );
         });
     }
     return dbName;
