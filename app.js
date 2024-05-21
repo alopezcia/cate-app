@@ -9,7 +9,7 @@ const initializeSQLite = () =>{
     
     if( !fs.existsSync(dbName)){
         fs.open( dbName, 'w', (err, file ) =>{
-            if (err) throw err;
+//            if (err) throw err;
             console.log(`File ${dbName} is opened in write mode.`);
             const db = new sqlite3.Database(dbName);
             const createTable = 
