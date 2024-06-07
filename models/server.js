@@ -81,8 +81,10 @@ class Server {
                 const pdf = `./pdfSigneds/solicitud_${uuid}.pdf`;
                 if( fs.existsSync(pdf)){
                     res.download(pdf, (err)=>{
-                        console.error(err) 
-                        res.status(404).send(`Error 404 - ${err}`); 
+                        if( err ) {
+                            console.log( `download lanzo el error: ${err}`  );
+                            // res.status(404).send(`Error 404 - ${err}`); 
+                        }
                     }); 
                 } else 
                     res.status(404).send(`Error 404 - ${pdf} no encontrado`); });
@@ -94,10 +96,10 @@ class Server {
                 ext = 'pdf';
             }
             const newName = `uploads/${name}.${ext}`;
-// console.log( `Renombrado ${file.path} por ${newName}` );
+ console.log( `Renombrado ${file.path} por ${newName}` );
             fs.rename(file.path, newName, (err) => { 
                 if( err) {
-                    console.error(err) 
+                    console.log(err) 
                     res.status(404).send(`Error 404 - ${err}`); 
                 }
             } );
