@@ -88,10 +88,21 @@ class Server {
         this.app.post('/upload', upload.single('file'), (req, res) => {
             const name = req.body["name"];
             const file = req["file"];
-            const ext = file.mimetype.substring( 6 );
+            let ext = file.mimetype.substring( 6 );
+            if( ext === 'ation/pdf' ){
+                ext = 'pdf';
+            }
             const newName = `uploads/${name}.${ext}`;
 // console.log( `Renombrado ${file.path} por ${newName}` );
-            fs.rename(file.path, newName, (err) => { if( err) console.error(err) } );
+            fs.rename(file.path, newName, (err) => { 
+                if( err) {
+                    console.error(err) 
+                    res.status(404).send(`Error 404 - ${err}`); 
+                }
+            } );
+            // Controlar si es PDF, poder convertir a png  if( fs.existsSync(newName) ){
+
+            // }
             // TODO - renombrar el fichero 
             res.json({ message: 'File uploaded successfully!' });
         });
