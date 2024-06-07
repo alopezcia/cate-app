@@ -164,15 +164,17 @@ const genPdf = (solicitud) =>{
         }
     }
     if( fs.existsSync(pagoFile) ){
-        doc.addPage().image(pagoFile, 0, 0, {
-            fit: [595, 841],
-            align: 'center',
-            valign: 'center'
-        });
+            doc.addPage().image(pagoFile, 0, 0, {
+                fit: [595, 841],
+                align: 'center',
+                valign: 'center'
+            });
     }
 
     // Finalize PDF file
     doc.end();
+
+
 }
 
 module.exports = {
