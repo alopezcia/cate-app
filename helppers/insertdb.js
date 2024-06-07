@@ -16,7 +16,7 @@ const insertdb = (solicitud) =>{
                     '${apellidosMadre}', '${nombreMadre}', '${telefonoMadre}', '${dniMadre}', 
                     '${direccion}', '${codpost}', '${email}', '${alergias}', '${comentarios}', 
                     '${imagenDigital}', '${imagenImpresa}', '${comunicaciones}', '${datosSalud}')`;
-    
+console.log( qry );
     db.run(qry);
     db.close();
 }

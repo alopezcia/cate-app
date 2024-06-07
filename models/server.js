@@ -81,7 +81,8 @@ class Server {
                 const pdf = `./pdfSigneds/solicitud_${uuid}.pdf`;
                 if( fs.existsSync(pdf)){
                     res.download(pdf, (err)=>{
-                        res.status(404).send(err);
+                        console.error(err) 
+                        res.status(404).send(`Error 404 - ${err}`); 
                     }); 
                 } else 
                     res.status(404).send(`Error 404 - ${pdf} no encontrado`); });
