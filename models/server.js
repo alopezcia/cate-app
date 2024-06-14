@@ -103,10 +103,6 @@ class Server {
                     res.status(404).send(`Error 404 - ${err}`); 
                 }
             } );
-            // Controlar si es PDF, poder convertir a png  if( fs.existsSync(newName) ){
-
-            // }
-            // TODO - renombrar el fichero 
             res.json({ message: 'File uploaded successfully!' });
         });
                 
